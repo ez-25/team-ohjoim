@@ -63,16 +63,20 @@ export function createHooks<TParams = void, TData = unknown, TError = Error>({
   function useGet(
     params: TParams,
     options?: Omit<
-      UseQueryOptions<TData, TError, TData, (string | TParams)[]>,
+      UseQueryOptions<TData, TError, TData, readonly (string | TParams)[]>,
       "queryKey" | "queryFn"
     >
   ) {
     // 파라미터를 queryKey에 포함시켜 캐싱이 제대로 동작하도록 함
     const fullQueryKey = [...baseQueryKey, params] as const;
 
-    return useQuery<TData, TError, TData>({
+    return useQuery<TData, TError, TData, readonly (string | TParams)[]>({
       queryKey: fullQueryKey,
-      queryFn: () => defaultQueryFn(params),
+      queryFn: () => {
+        if (!defaultQueryFn)
+          throw new Error("No queryFn or url provided for GET request.");
+        return defaultQueryFn(params);
+      },
       ...options,
     });
   }
