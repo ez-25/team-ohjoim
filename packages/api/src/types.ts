@@ -23,12 +23,6 @@ export interface ApiRequestOptions extends RequestInit {
   timeout?: number; // 요청 타임아웃 (밀리초)
 }
 
-// 검색 파라미터
-export interface SearchParams {
-  query?: string;
-  filters?: Record<string, any>;
-}
-
 // API 설정 타입
 export interface ApiConfig {
   baseUrl: string;

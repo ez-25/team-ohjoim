@@ -81,7 +81,13 @@ export function createHooks<TParams = void, TData = unknown, TError = Error>({
   function usePost(options?: UseMutationOptions<TData, TError, TParams>) {
     return useMutation<TData, TError, TParams>({
       mutationFn: (data: TParams) => {
-        return url ? apiClient.post<TData>(url, data) : defaultQueryFn(data);
+        if (url) {
+          return apiClient.post<TData>(url, data);
+        }
+        if (!defaultQueryFn) {
+          throw new Error("No queryFn or url provided for POST request.");
+        }
+        return defaultQueryFn(data);
       },
       ...options,
     });
@@ -91,7 +97,13 @@ export function createHooks<TParams = void, TData = unknown, TError = Error>({
   function usePut(options?: UseMutationOptions<TData, TError, TParams>) {
     return useMutation<TData, TError, TParams>({
       mutationFn: (data: TParams) => {
-        return url ? apiClient.put<TData>(url, data) : defaultQueryFn(data);
+        if (url) {
+          return apiClient.put<TData>(url, data);
+        }
+        if (!defaultQueryFn) {
+          throw new Error("No queryFn or url provided for PUT request.");
+        }
+        return defaultQueryFn(data);
       },
       ...options,
     });
@@ -121,6 +133,9 @@ export function createHooks<TParams = void, TData = unknown, TError = Error>({
           return apiClient.delete<TData>(fullUrl);
         }
 
+        if (!defaultQueryFn) {
+          throw new Error("No queryFn or url provided for DELETE request.");
+        }
         return defaultQueryFn(params);
       },
       ...options,
@@ -131,7 +146,13 @@ export function createHooks<TParams = void, TData = unknown, TError = Error>({
   function usePatch(options?: UseMutationOptions<TData, TError, TParams>) {
     return useMutation<TData, TError, TParams>({
       mutationFn: (data: TParams) => {
-        return url ? apiClient.patch<TData>(url, data) : defaultQueryFn(data);
+        if (url) {
+          return apiClient.patch<TData>(url, data);
+        }
+        if (!defaultQueryFn) {
+          throw new Error("No queryFn or url provided for PATCH request.");
+        }
+        return defaultQueryFn(data);
       },
       ...options,
     });
