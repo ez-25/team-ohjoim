@@ -1,42 +1,39 @@
-/**
- * API 사용을 위한 커스텀 훅 사용 예제
- */
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "../client";
+import { useState } from "react";
 import { ApiResponse } from "../types";
 import { createHooks } from "./createHooks";
 
-// 사용자 타입 예시
-interface User {
-  id: number;
-  name: string;
-  email: string;
-}
-
-// 사용자 생성/수정용 타입 예시
-interface UserInput {
-  name: string;
-  email: string;
-}
-
-// 페이징 파라미터 타입
-interface UserListParams {
-  page: number;
-  pageSize?: number;
-  search?: string;
-}
-
 /**
- * 사용자 API 관련 훅 (예시)
+ * 통합 API 훅 생성 예시 (useGet, usePut 등 한번에 생성)
  */
-
-// createHooks를 사용한 User API 훅 생성
-export const userApiHooks = createHooks<UserListParams>({
+const userApiHooks = createHooks<UserListParams>({
   queryKey: "users",
   url: "/api/users",
 });
 
-// 단일 사용자 조회 훅
+function UserList() {
+  const [page, setPage] = useState(1);
+  const { useGet } = userApiHooks;
+  const { data, isLoading } = useGet({ page, pageSize: 10 });
+
+  return (
+    <div>
+      {isLoading
+        ? "사용자 목록을 불러오는 중입니다..."
+        : !data
+          ? "표시할 사용자가 없습니다."
+          : JSON.stringify(data)}
+    </div>
+  );
+}
+
+/**
+ * 단일 API 생성 예시 (useGet 등 단일 훅 생성)
+ */
+import { apiClient } from "../client";
+import { User, UserInput, UserListParams } from "./example.types";
+
+// user API 훅 생성 예시 (GET 방식)
 export function useUser(id: number) {
   return useQuery({
     queryKey: ["user", id],
@@ -45,23 +42,25 @@ export function useUser(id: number) {
   });
 }
 
-// 사용자 생성 훅
+// user API 훅 생성 예시 (POST 방식)
 export function useCreateUser() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (userData: UserInput) =>
-      apiClient.post<ApiResponse<User>>("/api/users", userData),
-    onSuccess: () => {
+    mutationFn: (data: UserInput) =>
+      apiClient.post<ApiResponse<User>>("/api/users", data),
+    onSuccess: (response) => {
       // 사용자 목록 쿼리 무효화
       queryClient.invalidateQueries({
         queryKey: ["users"],
       });
+      // 새로 생성된 사용자 쿼리 추가
+      queryClient.setQueryData(["user", response.data.id], response);
     },
   });
 }
 
-// 사용자 수정 훅
+// user API 훅 생성 예시 (PUT 방식)
 export function useUpdateUser() {
   const queryClient = useQueryClient();
 
@@ -81,7 +80,7 @@ export function useUpdateUser() {
   });
 }
 
-// 사용자 삭제 훅
+// user API 훅 생성 예시 (DELETE 방식)
 export function useDeleteUser() {
   const queryClient = useQueryClient();
 
@@ -100,30 +99,3 @@ export function useDeleteUser() {
     },
   });
 }
-
-/**
- * 사용 예시:
- *
- * ```tsx
- * function UserList() {
- *   const [page, setPage] = useState(1);
- *   const { useGet } = userApiHooks;
- *   const { data, isLoading } = useGet({ page, pageSize: 10 });
- *
- *   if (isLoading) return <div>Loading...</div>;
- *
- *   return (
- *     <div>
- *       {data?.items.map(user => (
- *         <div key={user.id}>{user.name}</div>
- *       ))}
- *       <Pagination
- *         currentPage={page}
- *         totalPages={data?.totalPages || 1}
- *         onPageChange={setPage}
- *       />
- *     </div>
- *   );
- * }
- * ```
- */
