@@ -1,14 +1,6 @@
 # @repo/api
 
-모노레포 환경에서 Next.js 프로젝트를 위한 범용 API 통신 패키지입니다.
-
-## 기능
-
-- HTTP 클라이언트 래퍼 (fetch 기반)
-- React Query 기반 데이터 관리
-- 재사용 가능한 훅 팩토리
-- SSR/SSG 지원
-- TypeScript로 완벽한 타입 지원
+모노레포 환경에서 Next.js 및 React 프로젝트를 위한 범용 API 통신 패키지입니다.
 
 ## 설치
 
@@ -28,9 +20,14 @@
 pnpm install
 ```
 
-## 사용 방법
+## 주요 기능
 
-### 1. HTTP 클라이언트 사용
+- HTTP 클라이언트(apiClient) 제공 (GET, POST, PUT, DELETE, PATCH)
+- React Query 기반의 CRUD 훅 팩토리(createHooks)
+- 타입 안전한 API 응답 타입 제공
+- 인증 토큰 자동 헤더 처리
+
+## 1. HTTP 클라이언트 사용
 
 ```typescript
 import { apiClient } from "@repo/api";
@@ -48,32 +45,25 @@ const createUser = async (userData) => {
 };
 ```
 
-### 2. React Query와 함께 사용
+## 2. React Query와 함께 사용하기
 
 ```tsx
-// _app.tsx
-import { AppProps } from "next/app";
-import { QueryClientProvider, Hydrate } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@repo/api";
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps }) {
   return (
     <QueryClientProvider client={queryClient}>
-      <Hydrate state={(pageProps as any).dehydratedState}>
-        <Component {...pageProps} />
-      </Hydrate>
+      <Component {...pageProps} />
     </QueryClientProvider>
   );
 }
-
-export default MyApp;
 ```
 
-### 3. 훅 팩토리 사용
+## 3. CRUD 훅 팩토리(createHooks) 사용법
 
 ```tsx
-// hooks/useProducts.ts
-import { createHooks, PaginatedResponse } from "@repo/api";
+import { createHooks } from "@repo/api";
 
 interface Product {
   id: number;
@@ -82,14 +72,11 @@ interface Product {
 }
 
 interface ProductsParams {
-  page: number;
+  page?: number;
   category?: string;
 }
 
-export const productHooks = createHooks<
-  ProductsParams,
-  PaginatedResponse<Product>
->({
+export const productHooks = createHooks<ProductsParams, Product[]>({
   queryKey: "products",
   url: "/api/products",
 });
@@ -103,49 +90,89 @@ function ProductList() {
   const { useGet } = productHooks;
   const { data, isLoading } = useGet({ page, category: "electronics" });
 
-  if (isLoading) return <div>로딩중...</div>;
-
   return (
     <div>
-      {data?.items.map((product) => <div key={product.id}>{product.name}</div>)}
+      {isLoading
+        ? "상품 목록을 불러오는 중입니다..."
+        : !data
+          ? "표시할 상품이 없습니다."
+          : JSON.stringify(data)}
     </div>
   );
 }
 ```
 
-### 4. SSR/SSG에서 사용
+## 4. 단일 API 커스텀 훅 생성 예시
 
-```tsx
-// pages/users.tsx
-import { GetServerSideProps } from "next";
-import { dehydrate } from "@tanstack/react-query";
-import { prefetchQueries, apiClient, userApiHooks } from "@repo/api";
+아래와 같이 React Query의 useQuery, useMutation을 직접 사용하여 단일 엔드포인트용 커스텀 훅을 만들 수 있습니다.
 
-export default function UsersPage() {
-  const { useGet } = userApiHooks;
-  const { data } = useGet({ page: 1 });
+```typescript
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiClient } from "@repo/api";
+import { ApiResponse } from "@repo/api/types";
 
-  return <div>{/* 컴포넌트 내용 */}</div>;
+// 단일 사용자 조회 훅
+export function useUser(id: number) {
+  return useQuery({
+    queryKey: ["user", id],
+    queryFn: () => apiClient.get<ApiResponse<User>>(`/api/users/${id}`),
+    enabled: !!id,
+  });
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const dehydratedState = await prefetchQueries(context, [
-    {
-      queryKey: ["users", { page: 1 }],
-      queryFn: () => apiClient.get("/api/users?page=1"),
+// 사용자 생성 훅
+export function useCreateUser() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (userData: UserInput) =>
+      apiClient.post<ApiResponse<User>>("/api/users", userData),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
     },
-  ]);
+  });
+}
 
-  return {
-    props: {
-      dehydratedState,
+// 사용자 수정 훅
+export function useUpdateUser() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: UserInput }) =>
+      apiClient.put<ApiResponse<User>>(`/api/users/${id}`, data),
+    onSuccess: (response, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["user", variables.id] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
     },
-  };
-};
+  });
+}
+
+// 사용자 삭제 훅
+export function useDeleteUser() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) =>
+      apiClient.delete<ApiResponse<boolean>>(`/api/users/${id}`),
+    onSuccess: (_, userId) => {
+      queryClient.removeQueries({ queryKey: ["user", userId] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+  });
+}
+```
+
+## 5. 타입 예시 및 응답 구조
+
+```typescript
+// src/types.ts
+export interface ApiResponse<T> {
+  data: T;
+  success: boolean;
+  message?: string;
+}
 ```
 
 ## 참고 사항
 
-- 빌드하려면 루트 디렉토리에서 `pnpm build`를 실행하세요
-- 이 패키지는 Next.js 환경에 맞춰져 있으며, SSR/SSG를 완벽히 지원합니다
-- 추가 기능이나 수정이 필요하면 패키지를 직접 수정할 수 있습니다
+- 빌드하려면 루트 디렉토리에서 `pnpm build`를 실행하세요.
+- 이 패키지는 Next.js 및 React 환경에 맞춰져 있습니다.
+- 인증 토큰은 localStorage의 'token' 키에서 자동으로 읽어 Authorization 헤더에 추가됩니다.
+- 추가 기능이나 수정이 필요하면 패키지를 직접 수정할 수 있습니다.
