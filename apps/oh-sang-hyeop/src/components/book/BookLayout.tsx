@@ -47,7 +47,7 @@ export default function BookLayout({
       </div>
 
       {/* 펼쳐진 책 구조 */}
-      <div className="relative w-[960px] h-[600px] flex shadow-lg rounded-xl overflow-hidden">
+      <div className="relative w-[1200px] h-[600px] flex shadow-lg rounded-xl overflow-hidden">
         {/* 왼쪽 */}
         <div className="w-1/2 bg-white p-6 overflow-y-auto border-r border-gray-300">
           {leftPage}
