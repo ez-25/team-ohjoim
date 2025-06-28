@@ -20,6 +20,10 @@
     "node": ">=18"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.80.7",
+    "highcharts": "^12.3.0",
+    "highcharts-react-official": "^3.2.2",
+    "zustand": "^5.0.5"
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.1.2",
