@@ -3,31 +3,31 @@
   "version": "0.1.0",
   "private": true,
   "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
+      "import": "./dist/index.js",
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
     "./client": {
-      "import": "./dist/client.mjs",
+      "import": "./dist/client.js",
       "require": "./dist/client.js",
       "types": "./dist/client.d.ts"
     },
     "./react-query": {
-      "import": "./dist/react-query.mjs",
+      "import": "./dist/react-query.js",
       "require": "./dist/react-query.js",
       "types": "./dist/react-query.d.ts"
     },
     "./hooks": {
-      "import": "./dist/hooks/index.mjs",
+      "import": "./dist/hooks/index.js",
       "require": "./dist/hooks/index.js",
       "types": "./dist/hooks/index.d.ts"
     },
     "./nextjs": {
-      "import": "./dist/nextjs.mjs",
+      "import": "./dist/nextjs.js",
       "require": "./dist/nextjs.js",
       "types": "./dist/nextjs.d.ts"
     }
