@@ -20,16 +20,16 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.80.7",
     "highcharts": "^12.3.0",
     "highcharts-react-official": "^3.2.2",
-    "zustand": "^5.0.5"
+    "@tanstack/query-core": "5.81.5",
+    "@tanstack/react-query": "^5.81.5",
+    "zustand": "^5.0.6",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.1.2",
     "@mui/material": "^7.1.2",
-    "@tanstack/query-core": "5.81.5",
-    "@tanstack/react-query": "^5.81.5",
-    "zustand": "^5.0.6"
+    "clsx": "^2.1.1",
+    "react-hook-form": "^7.58.1"
   }
 }
