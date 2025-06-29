@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { googleSheetsService } from '../../../services/word/googleSheetsService';
 import { ReviewService } from '../../../services/word/reviewService';
-import { ReviewRequest } from '../../../types/word';
+import { ReviewRequest, BoxNumber } from '../../../types/word';
 
 /**
  * @swagger
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
 
     const updateData = {
       status: newStatus,
-      box: nextBox,
+      box: nextBox as BoxNumber,
       last_review_date: body.lastReviewDate,
       next_review_date: nextReviewDate,
       consecutive_correct: newConsecutiveCorrect,

@@ -1,38 +1,51 @@
 'use client';
 
-import { useState } from 'react';
-import { WordFilters } from "../../../types/word";
+import { cn } from "@/utils/cn";
+import { BottomNav } from "../BottomNav";
 import { Header } from "../Header";
+import {
+  bottomNavContainerStyles,
+  mainContentStyles,
+  mainLayoutStyles,
+  pageContainerStyles
+} from "./MainLayout.styles";
 
-export function MainLayout() {
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [filters, setFilters] = useState<WordFilters>({});
+interface MainLayoutProps {
+  children: React.ReactNode;
+  title: string;
+  showBackButton?: boolean;
+  onBackClick?: () => void;
+  headerActions?: React.ReactNode;
+  containerVariant?: "default" | "tight" | "loose" | "none";
+  className?: string;
+}
 
-  const handleBackClick = () => {
-    console.log("Back button clicked");
-  };
-
-  const handleMoreClick = () => {
-    setShowAddForm(!showAddForm);
-  };
-
-  const handleAddSuccess = () => {
-    setShowAddForm(false);
-    window.location.reload();
-  };
-
+export function MainLayout({ 
+  children,
+  title,
+  showBackButton = false,
+  onBackClick,
+  headerActions,
+  containerVariant = "default",
+  className 
+}: MainLayoutProps) {
   return (
-    <div className="max-w-sm mx-auto bg-gray-50 min-h-screen">
-      <Header 
-        title="외우자영단어"
-        showBackButton={false}
-        showMoreButton={true}
-        onBackClick={handleBackClick}
-        onMoreClick={handleMoreClick}
+    <div className={cn(mainLayoutStyles(), className)}>
+      <Header
+        title={title}
+        showBackButton={showBackButton}
+        onBackClick={onBackClick}
+        actions={headerActions}
       />
       
-      <div className="p-4 space-y-4">
-        example content here
+      <div className={mainContentStyles()}>
+        <div className={pageContainerStyles({ containerVariant })}>
+          {children}
+        </div>
+      </div>
+
+      <div className={bottomNavContainerStyles()}>
+        <BottomNav />
       </div>
     </div>
   );

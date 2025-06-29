@@ -4,9 +4,9 @@ export interface Word {
   meaning: string;
   example?: string;
   tag: string;
-  status: 'unreviewed' | 'reviewing' | 'memorized';
+  status: WordStatus;
   added_at: string;
-  box: number;
+  box: BoxNumber;
   last_review_date?: string;
   next_review_date?: string;
   consecutive_correct: number;
@@ -20,8 +20,8 @@ export interface CreateWordRequest {
 }
 
 export interface UpdateWordRequest extends Partial<CreateWordRequest> {
-  status?: 'unreviewed' | 'reviewing' | 'memorized';
-  box?: number;
+  status?: WordStatus;
+  box?: BoxNumber;
   last_review_date?: string;
   next_review_date?: string;
   consecutive_correct?: number;
@@ -29,7 +29,7 @@ export interface UpdateWordRequest extends Partial<CreateWordRequest> {
 
 export interface WordFilters {
   date?: string;
-  box?: number;
+  box?: BoxNumber;
   search?: string;
   filter?: 'review';
 }
@@ -41,13 +41,76 @@ export interface ReviewRequest {
   nextReviewDate: string;
 }
 
+export interface ReviewSubmission {
+  wordId: number;
+  result: ReviewResult;
+  timeSpent?: number;
+  difficulty?: 'easy' | 'hard';
+}
+
+export interface ReviewLogEntry {
+  rowId: number;
+  word: string;
+  result: 'correct' | 'incorrect';
+  reviewDate: string;
+  box: number;
+  timestamp: string;
+}
+
+export interface AddReviewLogRequest {
+  rowId: number;
+  word: string;
+  isCorrect: boolean;
+  reviewDate: string;
+  box: number;
+}
+
+export interface ApiResponse<T = unknown> {
+  success: boolean;
+  data?: T;
+  message: string;
+  error?: string;
+}
+
+export interface ApiError {
+  success: false;
+  error: string;
+  message: string;
+}
+
+export interface StatusDistributionData {
+  name: '미복습' | '복습중' | '암기완료';
+  y: number;
+}
+
+export interface DailyWordCountData {
+  date: string;
+  count: number;
+}
+
 export interface StatsData {
-  statusData: {
-    name: string;
-    y: number;
-  }[];
-  dailyData: {
-    date: string;
-    count: number;
-  }[];
+  statusData: StatusDistributionData[];
+  dailyData: DailyWordCountData[];
+}
+
+export interface ReviewResponse {
+  success: boolean;
+  message: string;
+  data: Word;
+}
+
+export type WordResponse = ApiResponse<Word>;
+export type WordListResponse = ApiResponse<Word[]>;
+export type StatsResponse = ApiResponse<StatsData>;
+export type CreateWordResponse = ApiResponse<Word>;
+export type UpdateWordResponse = ApiResponse<Word>;
+export type DeleteWordResponse = ApiResponse<{ rowId: number }>;
+
+export type WordStatus = 'unreviewed' | 'reviewing' | 'memorized';
+export type ReviewResult = 'correct' | 'incorrect';
+export type BoxNumber = 1 | 2 | 3 | 4 | 5;
+
+export interface WordWithValidation extends Word {
+  isValid: boolean;
+  validationErrors?: string[];
 }

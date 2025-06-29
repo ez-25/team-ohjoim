@@ -100,10 +100,11 @@ import { UpdateWordRequest } from '../../../../types/word';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { rowId: string } }
+  { params }: { params: Promise<{ rowId: string }> }
 ) {
   try {
-    const rowId = parseInt(params.rowId);
+    const { rowId: rowIdParam } = await params;
+    const rowId = parseInt(rowIdParam);
     if (isNaN(rowId)) {
       return NextResponse.json(
         {
@@ -147,10 +148,11 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { rowId: string } }
+  { params }: { params: Promise<{ rowId: string }> }
 ) {
   try {
-    const rowId = parseInt(params.rowId);
+    const { rowId: rowIdParam } = await params;
+    const rowId = parseInt(rowIdParam);
     if (isNaN(rowId)) {
       return NextResponse.json(
         {
@@ -184,10 +186,11 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { rowId: string } }
+  { params }: { params: Promise<{ rowId: string }> }
 ) {
   try {
-    const rowId = parseInt(params.rowId);
+    const { rowId: rowIdParam } = await params;
+    const rowId = parseInt(rowIdParam);
     if (isNaN(rowId)) {
       return NextResponse.json(
         {

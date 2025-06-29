@@ -1,33 +1,32 @@
+import { QueryProvider } from "@/components/providers/QueryProvider";
+import "@/styles/globals.css";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import QueryProvider from "../components/providers/QueryProvider";
-import '../styles/globals.css';
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
-  title: "Vocabulary Learning App",
-  description: "Learn vocabulary with interactive cards and categories",
+  title: "외우자영단어 - 영어 단어 암기 앱",
+  description: "Leitner 복습 시스템으로 효율적인 영어 단어 학습",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
+  themeColor: "#3B82F6",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/icon-192x192.png",
+    apple: "/icon-192x192.png",
+  },
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html lang="ko">
+      <head>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="mobile-web-app-capable" content="yes" />
+      </head>
+      <body className="font-sans antialiased">
         <QueryProvider>
           {children}
         </QueryProvider>

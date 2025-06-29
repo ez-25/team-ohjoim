@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { googleSheetsService } from '../../../services/word/googleSheetsService';
 import { ReviewService } from '../../../services/word/reviewService';
-import { WordFilters, CreateWordRequest } from '../../../types/word';
+import { WordFilters, CreateWordRequest, BoxNumber } from '../../../types/word';
 
 /**
  * @swagger
@@ -98,9 +98,10 @@ import { WordFilters, CreateWordRequest } from '../../../types/word';
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
+    const boxParam = searchParams.get('box');
     const filters: WordFilters = {
       date: searchParams.get('date') || undefined,
-      box: searchParams.get('box') ? parseInt(searchParams.get('box')!) : undefined,
+      box: boxParam ? parseInt(boxParam) as BoxNumber : undefined,
       search: searchParams.get('search') || undefined,
       filter: searchParams.get('filter') as 'review' || undefined,
     };
