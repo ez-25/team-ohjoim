@@ -97,6 +97,9 @@ apps/lim-jeong-hoon/
 ### Google Sheets 스키마
 (https://docs.google.com/spreadsheets/d/1zbwUa6kHPduVUL9wsJB4Y28K9YTMp9i-z7cqK2Mq92s/edit?gid=0#gid=0)
 
+프로젝트용 .env.local 다운로드
+(https://drive.google.com/drive/folders/1dLLogmDoN8GfajdZ6qX4HBFBm-2Fulox)
+
 | 컬럼 | 필드명 | 타입 | 설명 | 예시 |
 |------|--------|------|------|------|
 | A | word | string | 영어 단어 | "apple" |
@@ -145,12 +148,8 @@ TailwindCSS와 CVA, clsx, twmerge 플러그인을 사용해 스타일링
 ### **설치 및 실행**
 
 1. **환경 변수 설정**
-```bash
-# apps/lim-jeong-hoon/.env.local 파일 생성
-NEXT_GOOGLE_SHEETS_ID=your_google_sheets_id
-NEXT_GOOGLE_SHEETS_CLIENT_EMAIL=your_service_account_email
-NEXT_GOOGLE_SHEETS_PRIVATE_KEY=your_private_key
-```
+.env.local 다운로드
+(https://drive.google.com/drive/folders/1dLLogmDoN8GfajdZ6qX4HBFBm-2Fulox)
 
 2. **개발 서버 실행**
 ```bash
