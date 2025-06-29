@@ -20,9 +20,9 @@ export default function ItemImageSection({
         alt={`${artist} 이미지`}
         width={420}
         height={420}
-        className="rounded-md object-cover"
+        className="text-gray-800 rounded-md object-cover"
       />
-      <div className="text-xl space-y-2">
+      <div className="text-gray-800 text-xl space-y-2">
         <p><strong>아티스트:</strong> {artist}</p>
         <p><strong>{type === 'concert' ? '날짜' : '출시일'}:</strong> {date}</p>
         {type === 'concert' && location && (

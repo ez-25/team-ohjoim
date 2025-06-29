@@ -1,24 +1,35 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
 import styles from '@/styles/AlbumCard.module.css';
 
-interface Album {
-  title: string;
-  artist: string;
-  releaseDate: string;
-  thumbnail: string;
-}
-
 interface AlbumCardProps {
-  album: Album;
+  album: {
+    id?: string;
+    title: string;
+    artist: string;
+    releaseDate: string;
+    thumbnail: string;
+  };
 }
 
 export default function AlbumCard({ album }: AlbumCardProps) {
-  const { title, artist, releaseDate, thumbnail } = album;
+  const router = useRouter();
+  const { id, title, artist, releaseDate, thumbnail } = album;
+
+  const handleClick = () => {
+    if (id) {
+      router.push(`/album/${id}`);
+    } else {
+      alert('앨범 id가 없습니다.');
+    }
+  };
 
   return (
     <div className="flex justify-center items-center h-full">
       <div
         className="flex flex-col items-center justify-center w-[90%] h-[90%] border-2 border-purple-400 rounded-lg bg-purple-50 p-1 shadow-md cursor-pointer"
-        onClick={() => console.log('선택된 앨범:', title)}
+        onClick={handleClick}
       >
         {/* 텍스트 */}
         <h2 className="text-lg font-bold text-purple-900 mb-2">{title}</h2>
@@ -35,7 +46,8 @@ export default function AlbumCard({ album }: AlbumCardProps) {
             <div className="absolute top-1/2 left-1/2 w-8 h-8 bg-white rounded-full border-2 border-purple-400 transform -translate-x-1/2 -translate-y-1/2" />
           </div>
           <div className="text-xs text-purple-700 text-center mt-2">
-            {artist}<br />
+            {artist}
+            <br />
             {releaseDate}
           </div>
         </div>

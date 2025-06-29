@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "json-server": "json-server --watch jsonserver/db.json --port 4000"
   },
   "dependencies": {
     "@repo/eslint-config": "workspace:*",
@@ -14,6 +15,7 @@
     "@repo/tailwindcss-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@repo/ui": "workspace:*",
+    "axios": "^1.10.0",
     "next": "15.3.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
@@ -27,6 +29,7 @@
     "autoprefixer": "^10.4.21",
     "eslint": "^9",
     "eslint-config-next": "15.3.4",
+    "json-server": "1.0.0-beta.3",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

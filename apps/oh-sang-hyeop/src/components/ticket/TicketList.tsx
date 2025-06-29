@@ -1,12 +1,5 @@
 import TicketCard from './TicketCard';
-
-interface Ticket {
-  title: string;
-  artist: string;
-  date: string;
-  location: string;
-  thumbnail: string;
-}
+import { Ticket } from '@/types/ticket';
 
 interface TicketListProps {
   tickets: Ticket[];
@@ -18,7 +11,8 @@ export default function TicketList({ tickets, onSelect }: TicketListProps) {
     <div className="flex flex-col gap-4 p-4">
       {tickets.map((ticket, idx) => (
         <TicketCard
-          key={idx}
+          key={ticket.id}
+          id={ticket.id}
           title={ticket.title}
           artist={ticket.artist}
           date={ticket.date}
