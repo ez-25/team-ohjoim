@@ -44,7 +44,7 @@ export default function ItemExtraImageSection({ extraImages }: Props) {
 
   return (
     <div className="pt-6 pb-4 space-y-4 min-h-[250px]">
-      <p className="text-lg font-semibold">📷 추가 이미지</p>
+      <p className="text-lg font-semibold text-gray-800"> 추가 이미지</p>
 
       <div
         ref={scrollRef}

@@ -45,15 +45,15 @@ export default function ItemInfoSection({
         수정
       </Button>
   {/* 제목 */}
-      <h1 className="text-4xl font-bold">{title}</h1>
+      <h1 className="text-gray-800 text-4xl font-bold">{title}</h1>
 
       {/* 내용 */}
-      <div className="space-y-2 text-2xi">
+      <div className="text-gray-800 space-y-2 text-2xi">
         <p>
           <strong>{getCostLabel()}:</strong> {cost.toLocaleString()}원
         </p>
 
-        <div className="flex items-center gap-2">
+        <div className="text-gray-800 flex items-center gap-2">
           <strong>별점:</strong>
           <Rating
             name="popularity"

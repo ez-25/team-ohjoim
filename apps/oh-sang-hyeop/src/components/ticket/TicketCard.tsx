@@ -1,11 +1,7 @@
 import Image from 'next/image';
+import { Ticket } from '@/types/ticket';
 
-interface TicketCardProps {
-  title: string;
-  artist: string;
-  date: string;
-  location: string;
-  thumbnail: string;
+interface TicketCardProps extends Ticket {
   onClick?: () => void;
 }
 
