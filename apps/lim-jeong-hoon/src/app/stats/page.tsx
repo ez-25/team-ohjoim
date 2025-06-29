@@ -53,8 +53,8 @@ export default function StatsPage() {
 
         {/* 상태별 분포 차트 */}
         <Card>
-          <CardContent>
-            <StatsChart 
+          <CardContent className="h-auto">
+            <StatsChart
               type="status" 
               title="학습 상태 분포" 
               height="medium"

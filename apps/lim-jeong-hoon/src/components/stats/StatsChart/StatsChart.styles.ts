@@ -34,7 +34,7 @@ export const chartContainerStyles = cva(
     variants: {
       chartHeight: {
         small: "h-48",
-        medium: "h-64",
+        medium: "h-auto",
         large: "h-80",
       },
     },

@@ -1,24 +1,20 @@
 'use client';
+
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 
 export function QueryProvider({ children }: { children: React.ReactNode }) {
-
-  const queryClient = new QueryClient(
+  const [queryClient] = useState(() => new QueryClient(
     {
       defaultOptions: {
         queries: {
-          staleTime: 1000 * 60 * 3, // 3분
-          gcTime: 1000 * 60 * 10, // 10분 (이전 cacheTime)
-          retry: 1, // 실패 시 1번 재시도
-          refetchOnWindowFocus: true, // 창에 포커스될 때 refetch
-        },
-        mutations: {
-          retry: false, // 뮤테이션은 재시도하지 않음
+          refetchOnWindowFocus: false,
+          retry: 1,
         },
       },
     }
-  );
+  ));
 
   return (
     <QueryClientProvider client={queryClient}>

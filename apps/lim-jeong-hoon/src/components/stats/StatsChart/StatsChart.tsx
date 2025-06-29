@@ -2,8 +2,8 @@
 
 import { useStats } from "@/hooks/word";
 import { cn } from "@/utils/cn";
+import { CircularChart } from '@repo/ui';
 import {
-  ArcElement,
   BarElement,
   CategoryScale,
   Chart as ChartJS,
@@ -14,7 +14,7 @@ import {
   Title,
   Tooltip,
 } from 'chart.js';
-import { Doughnut, Line } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 import {
   chartContainerStyles,
   chartErrorStyles,
@@ -23,14 +23,13 @@ import {
   statsChartStyles
 } from "./StatsChart.styles";
 
-// Chart.js 등록
+// Chart.js 등록 (ArcElement 제거 - CircularChart 사용)
 ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
   LineElement,
   PointElement,
-  ArcElement,
   Title,
   Tooltip,
   Legend
@@ -72,56 +71,42 @@ export function StatsChart({ type, title, height = 'medium', className }: StatsC
   }
 
   const renderStatusChart = () => {
-    const statusData = {
-      labels: stats.statusData.map(item => item.name),
-      datasets: [
-        {
-          data: stats.statusData.map(item => item.y),
-          backgroundColor: [
-            '#EF4444', // 미복습 - 빨간색
-            '#3B82F6', // 복습중 - 파란색  
-            '#10B981', // 암기완료 - 초록색
-          ],
-          borderColor: [
-            '#DC2626',
-            '#2563EB',
-            '#059669',
-          ],
-          borderWidth: 2,
-        },
-      ],
-    };
+    // CircularChart용 segments 데이터 변환
+    const segments = stats.statusData.map((item, index) => {
+      const colors = [
+        '#EF4444', // 미복습 - 빨간색
+        '#3B82F6', // 복습중 - 파란색  
+        '#10B981', // 암기완료 - 초록색
+      ];
+      
+      return {
+        value: item.y,
+        color: colors[index] || '#6B7280',
+        label: item.name,
+      };
+    });
 
-    const options = {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: 'bottom' as const,
-          labels: {
-            padding: 20,
-            usePointStyle: true,
-            font: {
-              size: 12,
-              weight: 'normal' as const,
-            },
-          },
-        },
-        tooltip: {
-          callbacks: {
-            label: function(context: any) {
-              const total = stats.statusData.reduce((sum, item) => sum + item.y, 0);
-              const percentage = total > 0 ? Math.round((context.parsed / total) * 100) : 0;
-              return `${context.label}: ${context.parsed}개 (${percentage}%)`;
-            },
-          },
-        },
-      },
-    };
+    const total = stats.statusData.reduce((sum, item) => sum + item.y, 0);
 
     return (
       <div className={chartContainerStyles({ chartHeight: height })}>
-        <Doughnut data={statusData} options={options} />
+        <CircularChart
+          segments={segments}
+          total={total}
+          centerText={`총 ${total}개`}
+          centerTextPosition="center"
+          showLabel={false}
+          showLegend={true}
+          legendPosition="bottom"
+          donut={true}
+          strokeWidth={30}
+          size={height === 'small' ? 200 : height === 'medium' ? 300 : 400}
+          tooltipFormatter={(label: string, value: number) => {
+            const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+            return `<b>${label}</b>: ${value}개 (${percentage}%)`;
+          }}
+          animation={{ duration: 1000 }}
+        />
       </div>
     );
   };
